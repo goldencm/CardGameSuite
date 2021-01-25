@@ -1,4 +1,4 @@
-extern crate cards-lib;
+extern crate cards_lib as lib;
 
 
 fn main() {
@@ -13,6 +13,9 @@ fn main() {
 
 
 pub mod go_fish {
+    use lib::card::*;
+    use lib::deck::*;
+
     pub fn play_game() {
         let mut deck = generate_deck();
         deck.shuffle();
@@ -55,9 +58,7 @@ pub mod go_fish {
     }
     }
 
-    use GoFish::card::*;
-    use GoFish::deck::*;
-
+    
     #[derive(Debug)]
     pub struct Player {
         pub player_id : u32,
