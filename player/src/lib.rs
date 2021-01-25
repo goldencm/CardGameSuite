@@ -19,16 +19,29 @@ impl Player {
         Player{player_id, cards : Deck((deck.deal_n(n_cards)).to_vec()), score : 0, asked : Vec::new()}
     }
 
+
+    //Returns players score
     pub fn get_score(&self) -> u32{
         self.score
     }
 
-    pub fn update_score(&mut self) {
-        self.score += 1;
+
+    //Updates score by Option Some(u32) or by 1 if None
+    pub fn update_score(&mut self, update : Option<u32>) {
+        match update {
+            Some(i) => self.score += i,
+            None => self.score += 1
+        }
     }
+
+    //Displays all cards in current players hand
 
     pub fn display_hand(&self) {
         println!("Player's {} hand", self.player_id);
         println!("{}", self.cards);
+    }
+
+    pub fn has_card(&self, pair : (Option<Suit>, Option<Number>)) -> bool {
+        self.cards.has_card(pair)
     }
 }

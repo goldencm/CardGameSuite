@@ -36,24 +36,59 @@ pub mod deck {
         }
 
 
-        pub fn deal(&mut self) -> Option<Card> {
-            if self.size() < 1 {
-                panic!("Error: Dealing from empty deck")
-            } 
-            self.0.pop()
-        }
 
-        //TODO: Deal n # of cards into a Vec from a deck
-        pub fn deal_n(&mut self, n_cards : usize) -> Vec<Card> {
-            let mut hand = Vec::<Card>::with_capacity(n_cards);
-            for mut _i  in 0..n_cards {
-                let card = self.deal();
-                match card {
-                    Some(x) => hand.push(x),
-                    None => _i -= 1,
+        pub fn deal(&mut self, card : Option<Card>) -> Option<Card> {
+            match card {
+                Some(c) => {
+                    for i in 0..self.size() {
+                        if self.0[i].get_number() == c.get_number() 
+                            && self.0[i].get_suit() == c.get_suit() {
+                                return Some(self.0.remove(i));
+                            }
+                    }
+                    None 
+                }
+                None => {
+                    if self.size() < 1 {
+                        panic!("Error: Dealing from empty deck")
+                    } 
+                    self.0.pop()
                 }
             }
+            
+        }
+
+        /*Deals N number of cards from a deck, if a vector of cards is provided
+        then these cards will be dealt from the deck else the cards off the top
+        will be removed
+        NOTE: it is up to the caller to check if the deck contains each card instance and
+        that the deck is not empty or else the function will panic! */
+        pub fn deal_n(&mut self, cards : Option<Vec<Card>>, n_cards : usize) -> Vec<Card> {
+            let mut hand = Vec::<Card>::with_capacity(n_cards);
+            match cards {
+                Some(vec) => {
+                    for c in vec {
+                        let card = self.deal(Some(c));
+                        match card {
+                            Some(x) => hand.push(x),
+                            None => panic!("Deck does not contain card : {:?}", c)
+                        }
+                    }
+                },
+                None => {
+                    
+                    for mut _i  in 0..n_cards {
+                        let card = self.deal(None);
+                        match card {
+                            Some(x) => hand.push(x),
+                            None => _i -= 1,
+                        }
+                    }
+                    
+                }   
+            }
             hand
+                
         }
 
         pub fn size(&mut self) -> usize{
@@ -63,6 +98,44 @@ pub mod deck {
             }
 
             count
+        }
+
+        /*This function will tell the user wether or not there perspective deck
+        has an appropriate card. The suit and number of the card are optionally
+        provided but one is necessary when making the function call */
+        pub fn has_card(&self, pair : (Option<Suit>, Option<Number>)) -> bool {
+    
+            match pair {
+                //Match self with both suit and number
+                (Some(suit), Some(number)) => {
+                    for card in &self.0 {
+                        if card.get_number() == number && card.get_suit() == suit {
+                            return true; }
+                    }
+                    return false;
+                },
+    
+                //Match self with just suit
+                (Some(suit), None) => {
+                    for card in &self.0 {
+                        if card.get_suit() == suit {
+                            return true; }
+                    }
+                    return false;
+                },
+    
+                //Match self with just number
+                (None, Some(number)) => {
+                    for card in &self.0 {
+                        if card.get_number() == number {
+                            return true; }
+                    }
+                    return false;
+                },
+    
+                //Return error
+                (None, None) => panic!("No suit or number provided for has_card function"),
+            }
         }
     }
 
@@ -77,7 +150,6 @@ pub mod deck {
         }
     }
 }
-
 
 
 pub mod card { 
