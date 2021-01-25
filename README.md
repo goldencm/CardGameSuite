@@ -9,10 +9,10 @@ This suit of card games is built to test out the Rust programming language.
 
 ### Implement
 1. Add poker the suite: 
-  * Chips?
-  * Poker hand analyzer 
-  * AI
-  * Multi over LAN
+    * Chips?
+    * Poker hand analyzer 
+    * AI
+    * Multi over LAN
 
 2. GUI?
 
