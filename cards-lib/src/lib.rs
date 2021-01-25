@@ -66,8 +66,9 @@ pub mod deck {
         }
     }
 
+    
     impl std::fmt::Display for Deck {
-
+        #[allow(unused_must_use)]
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             for card in &self.0 {
                 write!(f, "{:?} {:?}\n", card.get_number(), card.get_suit());

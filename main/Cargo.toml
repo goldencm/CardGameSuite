@@ -1,5 +1,5 @@
 [package]
-name = "go_fish"
+name = "main"
 version = "0.1.0"
 authors = ["goldencm203 <goldencm203@potsdam.edu>"]
 edition = "2018"
@@ -7,5 +7,4 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rand = "0.8.0"
-cards-lib = {path = "../cards-lib"}
+go_fish = {path = "../go_fish"}
