@@ -1,7 +1,6 @@
 # Card Game Suite
 This suit of card games is built to test out the Rust programming language.
 
-=============
 
 ## TODO:
 
