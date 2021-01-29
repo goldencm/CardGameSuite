@@ -16,7 +16,7 @@ impl Player {
         Player ID, Deck (Vec<Cards>), Number of cards to be inserted into deck 
         The default score is set to 0 when making a new player*/
     pub fn new(player_id : u32, deck : &mut Deck, n_cards : usize) -> Player { 
-        Player{player_id, cards : Deck((deck.deal_n(n_cards)).to_vec()), score : 0, asked : Vec::new()}
+        Player{player_id, cards : Deck((deck.deal_n(None, n_cards)).to_vec()), score : 0, asked : Vec::new()}
     }
 
 
