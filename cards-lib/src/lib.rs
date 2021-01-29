@@ -1,17 +1,22 @@
+//! # Cards Library
+//! 
+//! 'cards-lib' is a collection of two modules that make up general
+//! functionality for handling of any game that involves a regular deck
+//! of 52 cards
 
+
+/// Contains a struct that holds a vector of Card Structs
+/// and various functional implementations for handling the deck struct
 pub mod deck {
+
     use super::card::*;
-    /*Deck Struct
-        Vector that holds each card object
-     */
+    
+    /// Struct containing a Vec of Card structs
     #[derive(Debug)]
     pub struct Deck(pub Vec<Card>);
 
 
-    /* generate_deck
-        constructs a deck of 52 cards then returns that deck
-        @returns - Deck struct with cards vec
-    */
+    /// Generate a new dack of the standard 52 Cards
     pub fn generate_deck() -> Deck {
         let suits : [Suit; 4] = [Suit::Club, Suit::Diamond, Suit::Heart, Suit::Spade];
         let numbers : [Number; 13] = [Number::Two, Number::Three, Number::Four, Number::Five, Number::Six, Number::Seven, 
@@ -30,23 +35,31 @@ pub mod deck {
 
     use rand::prelude::SliceRandom;
     impl Deck {
-        
+        ///Uses rand::SliceRandom to shuffle the vector
         pub fn shuffle(&mut self) {
             self.0.shuffle(&mut rand::thread_rng());
         }
 
 
-
+        ///Deals a single card from the Deck with the Option of a specified card
+        /// 
+        /// # Errors
+        /// Returns a None type if the specified Card provided is not within the deck
+        /// and prints the error
+        /// 
+        /// # Panics
+        /// Deck size is less than 1
         pub fn deal(&mut self, card : Option<Card>) -> Option<Card> {
             match card {
                 Some(c) => {
                     let index = self.0.iter().position(|card| card.eq(c));
                     match index {
                         Some(i) => Some(self.0.remove(i)),
-                        None => None
-                    }
-                    
-                     
+                        None => {
+                            eprintln!("Card {:?} is not in the deck", c);
+                            None
+                        }
+                    }      
                 }
                 None => {
                     if self.size() < 1 {
@@ -58,15 +71,19 @@ pub mod deck {
             
         }
 
-        /*Deals N number of cards from a deck, if a vector of cards is provided
-        then these cards will be dealt from the deck else the cards off the top
-        will be removed
-        NOTE: it is up to the caller to check if the deck contains each card instance and
-        that the deck is not empty or else the function will panic! */
-        pub fn deal_n(&mut self, cards : Option<Vec<Card>>, n_cards : usize) -> Vec<Card> {
-            let mut hand = Vec::<Card>::with_capacity(n_cards);
+        /// Deals N number of cards from the deck with the Option of a specified set of cards.
+        /// You have the option of providing either a vector of cards or the number of cards you would
+        /// like to pop off the deck vector.
+        /// 
+        /// # Panics
+        /// Deck does not contain the provided card
+        /// cards & n_cards are both None type    
+        pub fn deal_n(&mut self, cards : Option<Vec<Card>>, n_cards : Option<usize>) -> Vec<Card> {
+            #![allow(unused)]
+            let mut hand = Vec::<Card>::new();
             match cards {
                 Some(vec) => {
+                    hand = Vec::<Card>::with_capacity(vec.len());
                     for c in vec {
                         let card = self.deal(Some(c));
                         match card {
@@ -76,14 +93,20 @@ pub mod deck {
                     }
                 },
                 None => {
-                    
-                    for mut _i  in 0..n_cards {
-                        let card = self.deal(None);
-                        match card {
-                            Some(x) => hand.push(x),
-                            None => _i -= 1,
-                        }
+                    match n_cards{
+                        Some(n) => {
+                                hand = Vec::<Card>::with_capacity(n_cards.unwrap());
+                                for mut _i  in 0..n_cards.unwrap() {
+                                    let card = self.deal(None);
+                                    match card {
+                                        Some(x) => hand.push(x),
+                                        None => _i -= 1,
+                                    }
+                                }
+                            },
+                        None => panic!("No card size provided")
                     }
+                    
                     
                 }   
             }
@@ -91,6 +114,7 @@ pub mod deck {
                 
         }
 
+        ///Returns size of current deck counting all Some types
         pub fn size(&mut self) -> usize{
             let mut count : usize = 0;
             for _card in &self.0 {
@@ -100,9 +124,10 @@ pub mod deck {
             count
         }
 
-        /*This function will tell the user wether or not there perspective deck
-        has an appropriate card. The suit and number of the card are optionally
-        provided but one is necessary when making the function call */
+        ///Checks wether or not a deck has a card based on a Suit, Number, or both
+        /// 
+        ///# Panics
+        /// No suit or number was provided for the function call
         pub fn has_card(&self, pair : (Option<Suit>, Option<Number>)) -> bool {
     
             match pair {
@@ -156,13 +181,12 @@ pub mod deck {
 }
 
 
+/// Implementation of a playing Card containing a Suit and Number
+
 pub mod card { 
     
-
+    /// Card contains a Suit and Number Enum
     #[derive(Copy, Clone)]
-    /*Card Struct
-        Used to hold the suit and number(pip) of each individual card type
-     */
     #[derive(Debug)]
     pub struct Card {
         suit : Suit,
@@ -172,9 +196,7 @@ pub mod card {
     
 
 
-    /* Suit Enum
-        Holds each card suit type
-     */
+    /// Suit types
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub enum Suit {
         Club,
@@ -183,9 +205,7 @@ pub mod card {
         Spade
     }
 
-    /* Number Enum
-        Holds each pip type for all card options
-    */
+    /// Pip types
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub enum Number {
         Two,
@@ -206,9 +226,7 @@ pub mod card {
 
     impl Card {
         
-        /* New
-            Generates new card given a number enum and suit enum
-        */
+        /// Creates a new card struct from a number and suit enum
         pub fn new(n : Number, s : Suit) -> Card  {
             Card {
                 suit : s,
@@ -216,20 +234,17 @@ pub mod card {
             }
         }
 
-        /* get_suit
-            Returns the card suit of given card
-        */
+        /// Returns the suit enum from self
         pub fn get_suit(self) -> Suit {
             self.suit
         }
 
-        /* get_number
-            Returns the number of the given card    
-        */
+        /// Returns the number enum from self
         pub fn get_number(self) -> Number {
             self.number
         }
 
+        /// Compare two equality of two cards
         pub fn eq(self, other : Card) -> bool {
             self.get_number() == other.get_number() && self.get_suit() == other.get_suit()
         } 
@@ -237,7 +252,7 @@ pub mod card {
         
     }
 
-    /*Converts a string to suit enum */
+    /// Converts a string to suit enum
     impl std::str::FromStr for Suit {
         type Err = String;
     
@@ -252,7 +267,7 @@ pub mod card {
         }
     }
 
-    /*Converts a string to number enum */
+    /// Converts a string to number enum
     impl std::str::FromStr for Number {
         type Err = String;
     
