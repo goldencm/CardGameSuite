@@ -109,7 +109,7 @@ pub mod deck {
                 //Match self with both suit and number
                 (Some(suit), Some(number)) => {
                     for card in &self.0 {
-                        if card.get_number() == number && card.get_suit() == suit {
+                        if card.eq(Card::new(number, suit)) {
                             return true; }
                     }
                     return false;
@@ -137,7 +137,11 @@ pub mod deck {
                 (None, None) => panic!("No suit or number provided for has_card function"),
             }
         }
+
+        
     }
+
+    
 
     
     impl std::fmt::Display for Deck {
@@ -226,6 +230,9 @@ pub mod card {
             self.number
         }
 
+        pub fn eq(self, other : Card) -> bool {
+            self.get_number() == other.get_number() && self.get_suit() == other.get_suit()
+        } 
         
         
     }
@@ -269,3 +276,5 @@ pub mod card {
         }
     }
 }
+
+
