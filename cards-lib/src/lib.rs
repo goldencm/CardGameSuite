@@ -40,13 +40,13 @@ pub mod deck {
         pub fn deal(&mut self, card : Option<Card>) -> Option<Card> {
             match card {
                 Some(c) => {
-                    for i in 0..self.size() {
-                        if self.0[i].get_number() == c.get_number() 
-                            && self.0[i].get_suit() == c.get_suit() {
-                                return Some(self.0.remove(i));
-                            }
+                    let index = self.0.iter().position(|card| card.eq(c));
+                    match index {
+                        Some(i) => Some(self.0.remove(i)),
+                        None => None
                     }
-                    None 
+                    
+                     
                 }
                 None => {
                     if self.size() < 1 {
